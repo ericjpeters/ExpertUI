@@ -37,7 +37,7 @@ appController.controller('NetworkStatisticsController', function ($scope, $filte
         theme: "theme2",
         data: [
             {
-                //indexLabelFontColor: "MistyRose",
+                indexLabelFontColor: "#ffffff",
                 //indexLabelLineColor: "darkgrey",
                 type: "pie",
                 indexLabelFontFamily: "arial",
@@ -49,7 +49,11 @@ appController.controller('NetworkStatisticsController', function ($scope, $filte
                 showInLegend: true,
                 percentFormatString: "#0",
                 indexLabel: "#percent %",
-                dataPoints: [{  y: 100, name: "Not shown",color: '#f5f5f5'}]
+                dataPoints: [
+                    {  y: 64, name: "Value 1"},
+                    {  y: 36, name: "Value 2"},
+                    {  y: 1, name: "Value 3"}
+                ]
             //{  y: 100, name: "Not shown",color: '#f5f5f5'}
             }
         ]
@@ -113,14 +117,18 @@ appController.controller('NetworkStatisticsController', function ($scope, $filte
             objRFRxLRCErrors['failCRC16Value'] = RFRxCRC16Errors;
             objRFRxLRCErrors['dateTime'] = $filter('getDateTimeObj')(response.data.RFRxLRCErrors.updateTime);
             $scope.netStat.all[1] = objRFRxLRCErrors;
-            /*console.log($scope.netStat.all[1])
 
-            cOptions.data.dataPoints = [
+
+            /********** Graph init ***********************/
+
+
+            /*cOptions.data.dataPoints = [
                 {  y: 100, name: "Not shown",color: '#f5f5f5'}
-            ]
+            ]*/
+            console.log(cOptions.data[0].dataPoints)
             CanvasJS.addColorSet("statisticsColors",cColors);
             var chart = new CanvasJS.Chart('chartContainer',cOptions);
-            chart.render();*/
+            chart.render();
 
             // Number of corrupted CRC16 Frames received
             /*var objRFRxCRC16Errors = response.data.RFRxCRC16Errors;
