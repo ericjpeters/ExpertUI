@@ -24,9 +24,9 @@ appController.controller('NetworkStatisticsController', function ($scope, $filte
     var cOptions = {
         colorSet: "statisticsColors",
         title:{
-            text: "Success on Reception (% ok versus % corrupted)",
+            text: "",
             fontFamily: "arial",
-            fontSize: 20
+            fontSize: 18
         },
         legend: {
             verticalAlign: "bottom",
@@ -47,13 +47,9 @@ appController.controller('NetworkStatisticsController', function ($scope, $filte
                 indexLabelPlacement: "inside",
                 toolTipContent: "{name}: {y}",
                 showInLegend: true,
-                percentFormatString: "#0",
+                percentFormatString: "#0.0",
                 indexLabel: "#percent %",
-                dataPoints: [
-                    {  y: 64, name: "Value 1"},
-                    {  y: 36, name: "Value 2"},
-                    {  y: 1, name: "Value 3"}
-                ]
+                dataPoints: []
             //{  y: 100, name: "Not shown",color: '#f5f5f5'}
             }
         ]
@@ -96,6 +92,23 @@ appController.controller('NetworkStatisticsController', function ($scope, $filte
             objRFTxLBTBackOffs['dateTime'] = $filter('getDateTimeObj')(response.data.RFTxLBTBackOffs.updateTime);
             $scope.netStat.all[0] = objRFTxLBTBackOffs;
 
+            /********** Graph init - Data Rate on Sent ***********************/
+            cOptions.title.text = $scope._t('RFTxLBTBackOffs');
+            // We have no data to display
+            if(RFTxFrames === 0 && RFTxLBTBackOffs === 0){
+                cOptions.data[0].dataPoints = [
+                    {  y: 100, name: $scope._t('not_available'),color: '#f5f5f5'}
+                ];
+            }else{
+                cOptions.data[0].dataPoints = [
+                    {  y: RFTxFrames, name: $scope._t('RFTxFrames')},
+                    {  y: RFTxLBTBackOffs, name: $scope._t('RFTxLBTBackOffs_error')}
+                ];
+            }
+            var dateRate = new CanvasJS.Chart('dateRate',cOptions);
+            dateRate.render();
+
+
             // Number of correct Frames received RFRxFrames
             var RFRxFrames = parseInt(response.data.RFRxFrames.value);
             var RFRxLRCErrors = parseInt(response.data.RFRxLRCErrors.value);
@@ -119,16 +132,25 @@ appController.controller('NetworkStatisticsController', function ($scope, $filte
             $scope.netStat.all[1] = objRFRxLRCErrors;
 
 
-            /********** Graph init ***********************/
+            /********** Graph init - Success on Reception ***********************/
+            cOptions.title.text = $scope._t('success_on_reception');
+            // We have no data to display
+            if(RFRxFrames === 0 && RFRxLRCErrors === 0 && RFRxCRC16Errors === 0){
+                cOptions.data[0].dataPoints = [
+                    {  y: 100, name: $scope._t('not_available'),color: '#f5f5f5'}
+                ];
+            }else{
+                cOptions.data[0].dataPoints = [
+                    {  y: RFRxFrames, name: $scope._t('success_on_reception')},
+                    {  y: RFRxLRCErrors, name: $scope._t('failCRC8Name')},
+                    {  y: RFRxCRC16Errors, name: $scope._t('failCRC16Name')}
+                ];
+            }
 
-
-            /*cOptions.data.dataPoints = [
-                {  y: 100, name: "Not shown",color: '#f5f5f5'}
-            ]*/
             console.log(cOptions.data[0].dataPoints)
-            CanvasJS.addColorSet("statisticsColors",cColors);
-            var chart = new CanvasJS.Chart('chartContainer',cOptions);
-            chart.render();
+           // CanvasJS.addColorSet("statisticsColors",cColors);
+            var successReception = new CanvasJS.Chart('successReception',cOptions);
+            successReception.render();
 
             // Number of corrupted CRC16 Frames received
             /*var objRFRxCRC16Errors = response.data.RFRxCRC16Errors;
@@ -148,6 +170,22 @@ appController.controller('NetworkStatisticsController', function ($scope, $filte
 
             objRFRxForeignHomeID['dateTime'] = $filter('getDateTimeObj')(response.data.RFRxForeignHomeID.updateTime);
             $scope.netStat.all[3] = objRFRxForeignHomeID;
+
+            /********** Graph init - Data Rate on Sent ***********************/
+            cOptions.title.text = $scope._t('RFRxForeignHomeID');
+            // We have no data to display
+            if(RFTxFrames === 0 && RFTxLBTBackOffs === 0){
+                cOptions.data[0].dataPoints = [
+                    {  y: 100, name: $scope._t('not_available'),color: '#f5f5f5'}
+                ];
+            }else{
+                cOptions.data[0].dataPoints = [
+                    {  y: RFRxFrames, name: $scope._t('own_frames_desc')},
+                    {  y:  RFRxForeignHomeID, name: $scope._t('foreign_frames_desc')}
+                ];
+            }
+            var networkImpact = new CanvasJS.Chart('networkImpact',cOptions);
+            networkImpact.render();
             //return;
             /*$scope.netStat.all['RFTxLBTBackOffs'] = response.data.RFTxLBTBackOffs;
              $scope.netStat.all['RFRxCRC16Errors'] = response.data.RFRxCRC16Errors;
